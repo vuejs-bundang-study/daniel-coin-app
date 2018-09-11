@@ -18,12 +18,18 @@
             coinSelected: function (coin) {
                 if (this.chart) {
                     const lastDataIndex = this.chart.series[1].data.length - 1;
-                    const prevPrice = this.chart.series[1].data[lastDataIndex].y;
+                    const prevPrice = this.chart.series[1].data[lastDataIndex].close;
                     const currentPrice = coin.tradePrice;
                     if (prevPrice !== currentPrice) {
                         console.log(prevPrice);
-                        this.chart.series[1].data[lastDataIndex].update({ y: coin.tradePrice }, true, false);
-                        console.log(this.chart.series[1].data[lastDataIndex].y);
+                        this.chart.series[1].data[lastDataIndex].update({
+                            x: coin.timestamp,
+                            open: coin.openingPrice,
+                            high: coin.highPrice,
+                            low: coin.lowPrice,
+                            close: coin.tradePrice,
+                        }, true);
+                        console.log(this.chart.series[1].data[lastDataIndex].close);
                         console.log('-------');
                     }
                 }
@@ -66,13 +72,13 @@
                                 return a.timestamp - b.timestamp;
                             })
                             .map(data => {
-                                return [
-                                    data.timestamp,
-                                    data.openingPrice,
-                                    data.highPrice,
-                                    data.lowPrice,
-                                    data.tradePrice,
-                                ];
+                                return {
+                                    x: data.timestamp,
+                                    open: data.openingPrice,
+                                    high: data.highPrice,
+                                    low: data.lowPrice,
+                                    close: data.tradePrice,
+                                };
                             });
                         this.initializeChart(chartData);
                     })
